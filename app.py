@@ -45,14 +45,14 @@ def load_model(name):
         return train_all_models()[name]
 
 
-st.title("🛒 Online Shopper Purchase Intent – Model Comparison")
+st.title("🛍️ Will This Visitor Buy? – Classifier Comparison")
 st.write(
     "Upload the **test CSV**, choose a model, and see how well it predicts whether a "
     "website session ends in a purchase (`Revenue`). Dataset: UCI Online Shoppers "
     "Purchasing Intention (17 features, imbalanced target)."
 )
 
-st.sidebar.header("⚙️ Controls")
+st.sidebar.header("⚙️ Your Options")
 uploaded = st.sidebar.file_uploader("Upload test data (CSV)", type=["csv"])
 model_name = st.sidebar.selectbox("Select a model", list(MODEL_FILES.keys()))
 st.sidebar.caption(f"The CSV needs the original feature columns and a `{TARGET}` column.")
