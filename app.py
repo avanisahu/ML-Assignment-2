@@ -18,9 +18,31 @@ CLASS_NAMES = {0: "No purchase", 1: "Purchase"}
 st.set_page_config(page_title="Shopper Intent Classifier", page_icon="🛒", layout="wide")
 
 
+DATA_PATH = os.path.join(BASE_DIR, "data", "online_shoppers_intention.csv")
+
+
+@st.cache_resource(show_spinner="Preparing models (one-time, about a minute)...")
+def train_all_models():
+    """Fallback: retrain with the same 80/20 split as model/train_models.py.
+    Used only when a saved .pkl cannot be read (scikit-learn version mismatch)."""
+    from sklearn.model_selection import train_test_split
+    from utils import build_models
+    d = clean_dataframe(pd.read_csv(DATA_PATH))
+    X, y = d.drop(columns=TARGET), d[TARGET]
+    X_train, _, y_train, _ = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y)
+    models = build_models()
+    for m in models.values():
+        m.fit(X_train, y_train)
+    return models
+
+
 @st.cache_resource
 def load_model(name):
-    return joblib.load(os.path.join(MODEL_DIR, MODEL_FILES[name]))
+    try:
+        return joblib.load(os.path.join(MODEL_DIR, MODEL_FILES[name]))
+    except Exception:
+        return train_all_models()[name]
 
 
 st.title("🛒 Online Shopper Purchase Intent – Model Comparison")
