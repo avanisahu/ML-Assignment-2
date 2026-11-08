@@ -23,18 +23,20 @@ Predict whether an e-commerce website visit (session) ends in a **purchase** (`R
 
 ## c. GitHub Repository Link
 
-<PASTE YOUR GITHUB REPO LINK HERE>
+https://github.com/avanisahu/ML-Assignment-2
 
-Live Streamlit app: <PASTE YOUR STREAMLIT APP LINK HERE>
+Live Streamlit app: https://ml-assignment-2-hhwfjbnn65tcud3br2nmu8.streamlit.app/
 
 ```
 project-folder/
+
+│-- data/online_shoppers_intention.csv
+│-- model/ (train_models.py, utils.py, make_readme.py, *.pkl)
+|-- .gitignore
+│-- README.md
 │-- app.py
 │-- requirements.txt
-│-- README.md
 │-- test_data.csv
-│-- data/online_shoppers_intention.csv
-│-- model/ (train_models.py, utils.py, make_readme.py, *.pkl, metrics_summary.csv)
 ```
 
 Run locally: `pip install -r requirements.txt`, then `python model/train_models.py`, then `streamlit run app.py`.
@@ -53,9 +55,9 @@ Run locally: `pip install -r requirements.txt`, then `python model/train_models.
 
 | ML Model Name | Observation about model performance |
 |---|---|
-| Logistic Regression | MCC 0.5338 (rank 2 of 5), AUC 0.8962, accuracy 0.8504, precision 0.5116, recall 0.7487. A linear baseline on scaled + one-hot features; class weighting is used because only about 15% of sessions end in a purchase. Fast and interpretable, but cannot capture non-linear interactions between page values, exit rates and month. |
-| Decision Tree | MCC 0.5642 (rank 1 of 5), AUC 0.9046, accuracy 0.8455, precision 0.5008, recall 0.8351. A depth-limited tree (max_depth=6) that can model non-linear rules such as high PageValues leading to purchase. Easy to read, but a single tree can overfit or be unstable on noisy browsing data. |
-| kNN | MCC 0.4322 (rank 4 of 5), AUC 0.7993, accuracy 0.8739, precision 0.6715, recall 0.3639. Distance based (k=7) on standardised features. It has no class weighting, so it tends to favour the majority 'no purchase' class, which usually lowers recall on the minority class. |
-| Naive Bayes | MCC 0.3249 (rank 5 of 5), AUC 0.7939, accuracy 0.6736, precision 0.2941, recall 0.7906. Gaussian Naive Bayes assumes features are independent and normally distributed. Duration, count and rate features are correlated and skewed, so its probabilities are less reliable, though it is very fast. |
-| Support Vector Machine | MCC 0.5323 (rank 3 of 5), AUC 0.8840, accuracy 0.8569, precision 0.5279, recall 0.7173. RBF-kernel SVM with class weighting. It can learn a flexible non-linear boundary, but it is the slowest to train and the hardest to interpret. |
-| **Overall winner for this dataset** | **Decision Tree** has the best MCC (0.5642) and Decision Tree has the best AUC (0.9046). MCC is the main criterion because the classes are imbalanced and accuracy alone is misleading. |
+| Logistic Regression | Accuracy 85.0%, AUC 0.896, MCC 0.534. Class weighting lets it find about 75% of buyers (recall 0.749), but precision is only 0.51, so roughly half of the predicted buyers do not buy. A solid, simple baseline. |
+| Decision Tree | Best overall: MCC 0.564, AUC 0.905 and the highest recall (0.835). Splits on features like PageValues suit this data, and the depth limit of 6 keeps it from overfitting. The cost is low precision (0.50). |
+| kNN | Highest accuracy (87.4%) and precision (0.67) but recall of only 0.36, so it misses about 64% of buyers. The majority "no purchase" class dominates the neighbours, which makes accuracy misleading here (MCC 0.432). |
+| Naive Bayes | Weakest model: accuracy 67.4%, MCC 0.325. It flags many sessions as buyers (recall 0.79, precision 0.29) because correlated features such as bounce and exit rates break its independence assumption. |
+| Support Vector Machine | Very close to Logistic Regression (accuracy 85.7%, MCC 0.532, AUC 0.884). The RBF kernel gives no clear gain over the linear model here but takes longer to train. |
+| **Overall winner** | **Decision Tree** – it has the highest MCC (0.564), the highest AUC (0.905) and the best recall. MCC is the deciding metric because only about 15% of sessions are purchases, so accuracy alone favours models like kNN that miss most buyers. |
