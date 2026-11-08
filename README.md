@@ -4,7 +4,7 @@ Machine Learning – Assignment 2 (M.Tech DSE, BITS Pilani WILP)
 
 ## a. Problem Statement
 
-Predict whether an e-commerce website visit (session) ends in a **purchase** (`Revenue = 1`) or not (`Revenue = 0`) from the visitor's browsing behaviour, page metrics and session details. This is a **binary classification** problem with imbalanced classes. Five classifiers are trained on the same data, compared with six metrics, and demonstrated in a Streamlit web app.
+Predict whether an e-commerce website visit (session) ends in a **purchase** (`Revenue = 1`) or not (`Revenue = 0`) from the visitor's browsing behaviour, page metrics and session details. This is a **binary classification** problem with imbalanced classes. Five classifiers are trained on the same data, compared with six evaluation metrics, and demonstrated in a Streamlit web app.
 
 ## b. Dataset Description
 
@@ -17,7 +17,7 @@ Predict whether an e-commerce website visit (session) ends in a **purchase** (`R
 | Target | `Revenue` – 1 = purchase (1908 sessions), 0 = no purchase (10422 sessions) |
 | Missing values | 0 |
 
-**Pre-processing:** numeric columns are standardised, `Month` and `VisitorType` are one-hot encoded, `Weekend`/`Revenue` are converted to 0/1. All of this is inside a scikit-learn `Pipeline`, so the app accepts the raw CSV columns.
+**Pre-processing:** numeric columns are standardised, `Month` and `VisitorType` are one-hot encoded, and `Weekend`/`Revenue` are converted to 0/1. All of this sits inside a scikit-learn `Pipeline`, so the app accepts the raw CSV columns.
 
 **Split:** 80% train (9864 rows) / 20% test (2466 rows), stratified, `random_state=42`. The test rows are saved in `test_data.csv`. Precision, Recall and F1 are for the positive class (purchase).
 
@@ -28,18 +28,18 @@ https://github.com/avanisahu/ML-Assignment-2
 Live Streamlit app: https://ml-assignment-2-hhwfjbnn65tcud3br2nmu8.streamlit.app/
 
 ```
-project-folder/
-
-│-- data/online_shoppers_intention.csv
-│-- model/ (train_models.py, utils.py, make_readme.py, *.pkl)
-|-- .gitignore
-│-- README.md
-│-- app.py
-│-- requirements.txt
-│-- test_data.csv
+ML-Assignment-2/
+|-- app.py
+|-- requirements.txt
+|-- README.md
+|-- test_data.csv
+|-- data/online_shoppers_intention.csv
+|-- model/ (train_models.py, utils.py, make_readme.py, *.pkl)
 ```
 
 Run locally: `pip install -r requirements.txt`, then `python model/train_models.py`, then `streamlit run app.py`.
+
+Note: if a saved `.pkl` cannot be loaded because of a scikit-learn version difference (as on Streamlit Cloud), the app retrains the models automatically from `data/online_shoppers_intention.csv` using the same split.
 
 ## d. Models Used
 
@@ -60,4 +60,4 @@ Run locally: `pip install -r requirements.txt`, then `python model/train_models.
 | kNN | Highest accuracy (87.4%) and precision (0.67) but recall of only 0.36, so it misses about 64% of buyers. The majority "no purchase" class dominates the neighbours, which makes accuracy misleading here (MCC 0.432). |
 | Naive Bayes | Weakest model: accuracy 67.4%, MCC 0.325. It flags many sessions as buyers (recall 0.79, precision 0.29) because correlated features such as bounce and exit rates break its independence assumption. |
 | Support Vector Machine | Very close to Logistic Regression (accuracy 85.7%, MCC 0.532, AUC 0.884). The RBF kernel gives no clear gain over the linear model here but takes longer to train. |
-| **Overall winner** | **Decision Tree** – it has the highest MCC (0.564), the highest AUC (0.905) and the best recall. MCC is the deciding metric because only about 15% of sessions are purchases, so accuracy alone favours models like kNN that miss most buyers. |
+| **Overall winner for this dataset** | **Decision Tree** – it has the highest MCC (0.564), the highest AUC (0.905) and the best recall. MCC is the deciding metric because only about 15% of sessions are purchases, so accuracy alone favours models like kNN that miss most buyers. |
